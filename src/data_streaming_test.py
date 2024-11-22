@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Welcome! Metrics are at /stream."
+    return "Welcome! Metrics are at."
 
 
 @app.route('/metrics')

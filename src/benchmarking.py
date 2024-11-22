@@ -1,22 +1,42 @@
-import data
-import preprocessing
+import pandas as pd
+from flask import Flask, Response
+
+app = Flask(__name__)
 
 
-class Benchmarking:
-    def __init__(self):
-        data_df = data.load_csv_data(filepath="../data/aws_1hour.csv")
-        data_df = preprocessing.parse_data(data_df)
-        data.save_data(filepath="../data/preprocessed_aws_1hour.csv", data_df=data_df)
+@app.route('/')
+def home():
+    return "Welcome!"
 
-    def ingestion_rate(self, data_size: int, success_rate_threshold: float):
-        pass
 
-    def query_latency(self, query: str):
-        pass
+@app.route('/metrics_ingestion_rate')
+def metrics_ingestion_rate():
+    data_size = 0
+    success_rate_threshold = 0.6
+    pass
 
-    def storage_efficiency(self, dataset_size, retention_period):
-        pass
 
-    def high_cardinality(self, num_labels, query):
-        pass
+@app.route('/metrics_query_latency')
+def metrics_query_latency():
+    query = ""
+    pass
 
+
+@app.route('/metrics_storage_efficiency')
+def metrics_storage_efficiency():
+    dataset_size = 0
+    retention_period = 0
+    pass
+
+
+@app.route('/metrics_high_cardinality')
+def metrics_high_cardinality():
+    num_labels = 0
+    query = ""
+    pass
+
+
+if __name__ == "__main__":
+    data_df = pd.read_csv("../data/preprocessed_aws_1hour.csv")
+    print("Starting benchmarking..")
+    app.run(host="0.0.0.0", port=8000)
