@@ -20,7 +20,7 @@ def save_data(filepath: str, data_df: pd.DataFrame) -> None:
     print("Data has been saved successfully")
 
 
-def save_data_openmetrics(data_df, column, filename):
+def save_data_openmetrics(data_df, column, filepath):
     data = "# TYPE weather gauge\n"
     data_df.reset_index(inplace=True)
     for row in data_df.iterrows():
@@ -29,7 +29,6 @@ def save_data_openmetrics(data_df, column, filename):
         data += "weather{freq=\"1h\"} " + str(value) + " " + str(timestamp) + "\n"
     data += "# EOF"
 
-    filepath = posixpath.join(OUTPUT_PATH, filename)
     with open(filepath, "w", newline="\n") as file:
         file.write(data)
 
