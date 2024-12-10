@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 from advanced_databases_project import OUTPUT_PATH
 
+
 def load_data_csv(filepath: str) -> pd.DataFrame:
     print(f"Loading data from {filepath}..")
     data_df = pd.read_csv(filepath)
