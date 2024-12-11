@@ -5,4 +5,5 @@ PROJECT_PATH = Path(__file__).parent.parent.parent.absolute()
 DATA_PATH = PROJECT_PATH / 'data'
 OUTPUT_PATH = PROJECT_PATH / 'outputs'
 PROMETHEUS_PATH = PROJECT_PATH / 'prometheus'
-PROMETHEUS_OPENMETRICS_PATH = PROMETHEUS_PATH  / 'openMetrics'
+PROMETHEUS_OPENMETRICS_PATH = PROMETHEUS_PATH / 'openMetrics'
+PROMETHEUS_URL = "http://localhost:9090"
