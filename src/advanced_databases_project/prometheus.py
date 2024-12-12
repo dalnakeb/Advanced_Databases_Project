@@ -25,8 +25,3 @@ def stop_prometheus():
         print("Prometheus process terminated.")
     else:
         print("No running Prometheus process to terminate.")
-
-
-if __name__ == "__main__":
-    run_prometheus_server()
-    stop_prometheus()

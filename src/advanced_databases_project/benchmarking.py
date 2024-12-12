@@ -29,24 +29,31 @@ if __name__ == "__main__":
     #params = gen_params()
     #data.gen_openmetrics_data(data_df, params=params, col_name="air_temperature")
 
+    #Ingestion Speed
     #params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 50}, {'n': 1, 'N': 100}, {'n': 1, 'N': 500}, {'n': 1, 'N': 1000}]
     #Bs = ["10h", "20h", "40h", "80h", "160h", "320h", "640h"]
     #ingestion_speed.plot_ingestion_speed(params=params, Bs=Bs)
 
+    # Data Size
     #params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 50}, {'n': 1, 'N': 100}, {'n': 1, 'N': 500}, {'n': 1, 'N': 1000}]
     #Bs = ["10h", "20h", "40h", "80h", "160h", "380h", "760h"]
     #data_size.plot_data_size(params=params, Bs=Bs)
 
+    # Ingest data
     n = 1
     N = 50000
     filename = f"n-{n}_N-{N}.txt"
-    B = "320h"
-    dir_name = f"{PROMETHEUS_PATH}/data_blocks"
-    query_latency.ingest_data(filename=filename, B=B, dir_name=dir_name)
-    rep = 100
-    prometheus.run_prometheus_server(dir_name)
-    query = "avg_over_time(weather[2400d] @ 1732028400)"
-    query_latency = query_latency.compute_query_latency(query=query, rep=rep) // 1000000
-    print(f"query_latency: {query_latency:.2f} ms")
-    prometheus.stop_prometheus()
+    B = 160
+    Bs = [f"{B}h", f"{B*2}h", f"{B*4}h", f"{B*10}h", f"{B*28}h", f"{B*90}h", f"{B*250}h"]
+    dir_names = [f"{PROMETHEUS_PATH}/data_blocks_B-" + str(B) for B in Bs]
+    #for dir_name, B in zip(dir_names, Bs):
+    #    query_latency.ingest_data(filename=filename, B=B, dir_name=dir_name)
+
+    # Selection query
+    #rep = 100
+    #query_latency.plot_selection_latency(dir_names=dir_names, Bs=Bs, rep=rep)
+
+    # Aggregation query
+    #rep = 100
+    #query_latency.plot_aggregation_latency(dir_names=dir_names, Bs=Bs, rep=rep)
 
