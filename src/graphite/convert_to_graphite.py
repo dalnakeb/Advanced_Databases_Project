@@ -1,3 +1,6 @@
+"""python code to convert the preprocessed_aws_1hour.csv datafile into a 
+   datafile readable by graphite"""
+
 #!/usr/bin/python3
 
 import csv
@@ -9,14 +12,15 @@ base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 input_file = os.path.join(base_dir, "data", "preprocessed_aws_1hour.csv")
 output_file = os.path.join(base_dir, "data", "graphite_data.txt")
 
-# Function pour convertir les timestamp en timestamp uix epoch, qui est le format attendu par graphite
 def convert_to_epoch(timestamp_str):
+    """Function pour convertir les timestamp en timestamp unix epoch, 
+    qui est le format attendu par graphite"""
     dt = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
     return int(dt.timestamp())
 
 #il reste encore a ignorer la 1e rangée
 # Traduit les données en données pour graphite
-with open(input_file, "r") as csv_file, open(output_file, "w") as output:
+with open(input_file, "r", encoding="utf-8") as csv_file, open(output_file, "w", encoding="utf-8") as output:
     reader = csv.DictReader(csv_file)
     for row in reader:
         timestamp = convert_to_epoch(row["timestamp"])
@@ -26,5 +30,3 @@ with open(input_file, "r") as csv_file, open(output_file, "w") as output:
         output.write(f"environment.precipitation {row['precipitation']} {timestamp}\n")
 
 print(f"Data converted and saved to {output_file}")
-
-######50000h de données
