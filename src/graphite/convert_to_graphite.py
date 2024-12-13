@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 # définition des path
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 input_file = os.path.join(base_dir, "data", "preprocessed_aws_1hour.csv")
 output_file = os.path.join(base_dir, "data", "graphite_data.txt")
 
@@ -27,4 +27,4 @@ with open(input_file, "r") as csv_file, open(output_file, "w") as output:
 
 print(f"Data converted and saved to {output_file}")
 
-###### need a gitignore for the generated file!!!
+######50000h de données
