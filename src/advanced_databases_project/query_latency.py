@@ -57,13 +57,13 @@ def ingest_data(filename: str, B: str, dir_name, delete_existent=False):
 
 
 def plot_selection_latency(dir_names, Bs, rep, output_text=False):
-    time_periods = [1, 10, 100, 1000, 2400]
+    time_periods = [1, 10, 100, 1000, 10000, 100000, 1000000]
     query_latencies = []
     for dir_name, B in zip(dir_names, Bs):
         prometheus.run_prometheus_server(dir_name)
         query_latencies.append({"B": B, "ql": []})
         for time_period in time_periods:
-            query = f"weather[{time_period}d] @ end()"
+            query = f"weather[{time_period}h] @ end()"
             query_latency = compute_query_latency(query=query, rep=rep, output_text=output_text) // 1000
             query_latencies[-1]["ql"].append(query_latency)
             print(f"B:{B} - query_latency: {query_latency:.2f} us - time period: {time_period}")
@@ -71,7 +71,7 @@ def plot_selection_latency(dir_names, Bs, rep, output_text=False):
 
     for B, query_latency in zip(Bs, query_latencies):
         plt.plot(time_periods, query_latency["ql"], label=B)
-    plt.xlabel("Time Period (d)")
+    plt.xlabel("Time Period (h)")
     plt.ylabel("Query Latency (us)")
     plt.title("Selection Query Latency")
     plt.legend()
@@ -79,13 +79,13 @@ def plot_selection_latency(dir_names, Bs, rep, output_text=False):
 
 
 def plot_aggregation_latency(dir_names, Bs, rep, output_text=False):
-    time_periods = [1, 10, 100, 1000, 2400]
+    time_periods = [1, 10, 100, 1000, 10000, 100000, 1000000]
     query_latencies = []
     for dir_name, B in zip(dir_names, Bs):
         prometheus.run_prometheus_server(dir_name)
         query_latencies.append({"B": B, "ql": []})
         for time_period in time_periods:
-            query = f"avg_over_time(weather[{time_period}d])"
+            query = f"avg_over_time(weather[{time_period}h])"
             query_latency = compute_query_latency(query=query, rep=rep, output_text=output_text) // 1000
             query_latencies[-1]["ql"].append(query_latency)
             print(f"B:{B} - query_latency: {query_latency:.2f} us - time period: {time_period}")
@@ -93,7 +93,7 @@ def plot_aggregation_latency(dir_names, Bs, rep, output_text=False):
 
     for B, query_latency in zip(Bs, query_latencies):
         plt.plot(time_periods, query_latency["ql"], label=B)
-    plt.xlabel("Time Period (d)")
+    plt.xlabel("Time Period (h)")
     plt.ylabel("Query Latency (us)")
     plt.title("Aggregation Query Latency")
     plt.legend()

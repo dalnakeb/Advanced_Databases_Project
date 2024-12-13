@@ -2,8 +2,7 @@ import subprocess
 from advanced_databases_project import PROMETHEUS_PATH
 
 
-process = None  # To store the process object
-
+process = None
 
 def run_prometheus_server(dir_name):
     global process
@@ -20,7 +19,7 @@ def run_prometheus_server(dir_name):
 def stop_prometheus():
     global process
     if process and process.poll() is None:
-        process.kill()  # Gracefully terminate the process
+        process.kill()
         process.wait()
         print("Prometheus process terminated.")
     else:

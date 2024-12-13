@@ -39,7 +39,7 @@ def compute_ingestion_speed(filename: str, B: str, dir_name):
     return execution_time
 
 
-def plot_ingestion_speed(params, Bs):
+def plot_ingestion_speed(params, Bs, rep):
     ingestion_speeds = {}
 
     for B in Bs:
@@ -52,7 +52,7 @@ def plot_ingestion_speed(params, Bs):
             filename = f"n-{n}_N-{N}.txt"
 
             speeds = []
-            for _ in range(5):
+            for _ in range(rep):
                 speed = compute_ingestion_speed(filename=filename, B=B, dir_name=B)
                 speeds.append(speed)
             avg_speed = np.mean(speeds)

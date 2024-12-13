@@ -7,3 +7,5 @@ OUTPUT_PATH = PROJECT_PATH / 'outputs'
 PROMETHEUS_PATH = PROJECT_PATH / 'prometheus'
 PROMETHEUS_OPENMETRICS_PATH = PROMETHEUS_PATH / 'openMetrics'
 PROMETHEUS_URL = "http://localhost:9090"
+POSTGRESQL_DATA_PATH = "C:/Program Files/PostgreSQL/17/data"
+POSTGRESQL_BIN_PATH = "C:/\"Program Files\"/PostgreSQL/17/bin"
