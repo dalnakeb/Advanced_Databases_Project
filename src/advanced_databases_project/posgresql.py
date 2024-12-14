@@ -1,5 +1,4 @@
 import posixpath
-
 import matplotlib.pyplot as plt
 import numpy as np
 import psycopg2
@@ -7,13 +6,8 @@ import subprocess
 import os
 import pandas as pd
 import time
-from advanced_databases_project import OUTPUT_PATH, POSTGRESQL_BIN_PATH, POSTGRESQL_DATA_PATH
-
-DB_NAME = "weather"
-DB_USER = "postgres"
-DB_PASSWORD = "dklmhm1234"
-DB_HOST = "localhost"
-DB_PORT = "5432"
+from advanced_databases_project import (data, OUTPUT_PATH, POSTGRESQL_BIN_PATH, POSTGRESQL_DATA_PATH, DB_NAME, DB_HOST,
+                                        DB_PORT, DB_USER, DB_PASSWORD)
 
 
 def plot_data_ingestion_latency(file_path):
@@ -71,28 +65,32 @@ def ingest_data(file_path):
 def plot_selection_latency():
     conn = connect_to_db()
     cursor = conn.cursor()
-
+    filename = posixpath.join(OUTPUT_PATH, "preprocessed_aws_1hour.csv")
+    data_df = data.load_data_csv(filename).reset_index()
     time_periods = [10, 100, 1000, 10000, 100000, 1000000]
     selection_times = []
     for time_period in time_periods:
         times = 0
-        for i in range(100):
+        for i in range(10):
             if i % 10 == 0:
                 print(i)
+            timestamp = list(data_df.tail(time_period)["timestamp"])[0]
             start_time = time.time_ns()
             cursor.execute(f"""
-                        SELECT *
-                        FROM weather_metrics
-                        ORDER BY timestamp DESC
-                        LIMIT {time_period};""")
+                                    SELECT *
+                                    FROM weather_metrics
+                                    WHERE timestamp BETWEEN '{timestamp}' AND (select max(timestamp)
+                                    from weather_metrics) ;""")
             conn.commit()
             end_time = time.time_ns()
-            times += end_time-start_time
+            times += end_time - start_time
+
         times = np.mean(times)
         selection_times.append((times) // 1000)
 
     plt.plot(time_periods, [selection_time for selection_time in selection_times])
     plt.scatter(time_periods, [selection_time for selection_time in selection_times])
+
     plt.xlabel("Time Period (h)")
     plt.ylabel("Selection Time (us)")
     plt.title("POSTGRESQL Selection Time Latency")
@@ -136,11 +134,11 @@ def plot_aggregation_latency():
 
 
 def connect_to_db():
-    conn = psycopg2.connect(database="weather",
-                            user="postgres",
-                            host='localhost',
-                            password="dklmhm1234",
-                            port=5432)
+    conn = psycopg2.connect(database=DB_NAME,
+                            user=DB_USER,
+                            host=DB_HOST,
+                            password=DB_PASSWORD,
+                            port=DB_PORT)
     return conn
 
 
@@ -158,11 +156,46 @@ def create_table():
     conn.close()
 
 
+def plot_data_size(file_path):
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    time_periods = [10, 100, 1000, 10000, 100000, 1000000]
+    data_df = pd.read_csv(file_path).reset_index()
+    data_sizes = []
+    cursor.execute("TRUNCATE TABLE weather_metrics;")
+    conn.commit()
+    for time_period in time_periods:
+        data_df2 = data_df.tail(time_period)
+        for i, row in data_df2.iterrows():
+            if i % 1000 == 0:
+                print(row["timestamp"])
+            cursor.execute("""
+                    INSERT INTO weather_metrics (timestamp, air_temperature)
+                    VALUES (%s, %s);
+                """, (row['timestamp'], row['air_temperature']))
+        conn.commit()
+        cursor.execute("SELECT pg_size_pretty(pg_total_relation_size('weather_metrics'));")
+        conn.commit()
+        data_sizes.append(cursor.fetchone()[0])
+        cursor.execute("TRUNCATE TABLE weather_metrics;")
+        conn.commit()
+
+    plt.plot(time_periods, [data_size for data_size in data_sizes])
+    plt.scatter(time_periods, [data_size for data_size in data_sizes])
+    plt.xlabel("Time Period (h)")
+    plt.ylabel("Data Size")
+    plt.title("POSTGRESQL Data Size")
+    plt.show()
+    cursor.close()
+    conn.close()
+
+
 if __name__ == "__main__":
     create_table()
     filename = "preprocessed_aws_1hour.csv"
     filepath = posixpath.join(OUTPUT_PATH, filename)
     #plot_data_ingestion_latency(filepath)
     #ingest_data(filepath)
+    plot_data_size(filepath)
     #plot_selection_latency()
-    plot_aggregation_latency()
+    #plot_aggregation_latency()

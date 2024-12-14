@@ -23,23 +23,24 @@ def gen_params():
 
 
 if __name__ == "__main__":
-    #filename = "preprocessed_aws_1hour.csv"
-    #filepath = posixpath.join(OUTPUT_PATH, filename)
-    #data_df = data.load_data_csv(filepath=filepath)
-    #params = gen_params()
-    #data.gen_openmetrics_data(data_df, params=params, col_name="air_temperature")
+    # Generate openMetrics data
+    """filename = "preprocessed_aws_1hour.csv"
+    filepath = posixpath.join(OUTPUT_PATH, filename)
+    data_df = data.load_data_csv(filepath=filepath)
+    params = gen_params()
+    data.gen_openmetrics_data(data_df, params=params, col_name="air_temperature")"""
 
-    #B = 1000
-    #Bs = [f"{B * 2}m", f"{B * 4}m", f"{B * 10}m", f"{B * 30}m", f"{B * 100}m"]
+    """B = 1000
+    Bs = [f"{B * 2}m", f"{B * 4}m", f"{B * 10}m", f"{B * 30}m", f"{B * 100}m"]"""
 
     #Ingestion Speed
-    #params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 100}, {'n': 1, 'N': 1000}, {'n': 1, 'N': 10000}, {'n': 1, 'N': 100000}]
-    #rep = 5
-    #ingestion_speed.plot_ingestion_speed(params=params, Bs=Bs, rep=rep)
+    """params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 100}, {'n': 1, 'N': 1000}, {'n': 1, 'N': 10000}, {'n': 1, 'N': 100000}]
+    rep = 5
+    ingestion_speed.plot_ingestion_speed(params=params, Bs=Bs, rep=rep)"""
 
     # Data Size
-    #params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 100}, {'n': 1, 'N': 1000}, {'n': 1, 'N': 10000}, {'n': 1, 'N': 100000}]
-    #data_size.plot_data_size(params=params, Bs=Bs)
+    """params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 100}, {'n': 1, 'N': 1000}, {'n': 1, 'N': 10000}, {'n': 1, 'N': 100000}]
+    data_size.plot_data_size(params=params, Bs=Bs)"""
 
     # Ingest data
     n = 1
@@ -49,14 +50,14 @@ if __name__ == "__main__":
     Bs = [f"{B * 1}m", f"{B * 3}m", f"{B * 10}m", f"{B * 50}m", f"{B * 100}m"]
     dir_names = [f"{PROMETHEUS_PATH}/data_blocks_B-" + str(B) for B in Bs]
 
-    #for dir_name, B in zip(dir_names, Bs):
-    #    query_latency.ingest_data(filename=filename, B=B, dir_name=dir_name)
+    """for dir_name, B in zip(dir_names, Bs):
+        query_latency.ingest_data(filename=filename, B=B, dir_name=dir_name)"""
 
     # Selection query
-    #rep = 100
-    #query_latency.plot_selection_latency(dir_names=dir_names, Bs=Bs, rep=rep)
+    """rep = 100
+    query_latency.plot_selection_latency(dir_names=dir_names, Bs=Bs, rep=rep)"""
 
     # Aggregation query
-    #rep = 100
-    #query_latency.plot_aggregation_latency(dir_names=dir_names, Bs=Bs, rep=rep)
+    """rep = 100
+    query_latency.plot_aggregation_latency(dir_names=dir_names, Bs=Bs, rep=rep)"""
 

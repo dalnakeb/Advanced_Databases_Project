@@ -9,6 +9,7 @@ def interpolate_missing_values(data_df: pd.DataFrame) -> pd.DataFrame:
     """
     return data_df.interpolate()
 
+
 def interpolate_missing_timestamps(data_df: pd.DataFrame, freq: str) -> pd.DataFrame:
     """
     Injects missing timestamps in a dataframe depending givien a frequency, and interpolate their missing data.
