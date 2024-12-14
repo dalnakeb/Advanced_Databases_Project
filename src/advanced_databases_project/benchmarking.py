@@ -30,12 +30,12 @@ if __name__ == "__main__":
     params = gen_params()
     data.gen_openmetrics_data(data_df, params=params, col_name="air_temperature")"""
 
-    """B = 1000
-    Bs = [f"{B * 2}m", f"{B * 4}m", f"{B * 10}m", f"{B * 30}m", f"{B * 100}m"]"""
+    B = 1000
+    Bs = [f"{B}m", f"{B*2}m", f"{B * 4}m", f"{B * 10}m", f"{B * 30}m", f"{B * 100}m"]
 
     #Ingestion Speed
     """params = [{'n': 1, 'N': 10}, {'n': 1, 'N': 100}, {'n': 1, 'N': 1000}, {'n': 1, 'N': 10000}, {'n': 1, 'N': 100000}]
-    rep = 5
+    rep = 1
     ingestion_speed.plot_ingestion_speed(params=params, Bs=Bs, rep=rep)"""
 
     # Data Size
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Ingest data
     n = 1
-    N = 1000000
+    N = 100000
     B = 10000
     filename = f"n-{n}_N-{N}.txt"
     Bs = [f"{B * 1}m", f"{B * 3}m", f"{B * 10}m", f"{B * 50}m", f"{B * 100}m"]
@@ -54,8 +54,8 @@ if __name__ == "__main__":
         query_latency.ingest_data(filename=filename, B=B, dir_name=dir_name)"""
 
     # Selection query
-    """rep = 100
-    query_latency.plot_selection_latency(dir_names=dir_names, Bs=Bs, rep=rep)"""
+    rep = 100
+    query_latency.plot_selection_latency(dir_names=dir_names, Bs=Bs, rep=rep)
 
     # Aggregation query
     """rep = 100

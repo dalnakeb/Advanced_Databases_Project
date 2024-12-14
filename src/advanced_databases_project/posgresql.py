@@ -13,7 +13,7 @@ from advanced_databases_project import (data, OUTPUT_PATH, POSTGRESQL_BIN_PATH, 
 def plot_data_ingestion_latency(file_path):
     conn = connect_to_db()
     cursor = conn.cursor()
-    time_periods = [10, 100, 1000, 10000, 100000, 1000000]
+    time_periods = [10, 100, 1000, 10000, 100000]
     data_df = pd.read_csv(file_path).reset_index()
     ingestion_times = []
     cursor.execute("TRUNCATE TABLE weather_metrics;")
@@ -33,12 +33,12 @@ def plot_data_ingestion_latency(file_path):
         cursor.execute("TRUNCATE TABLE weather_metrics;")
         conn.commit()
 
-        ingestion_times.append((end_time-start_time) // 1000)
+        ingestion_times.append((end_time-start_time) / 1000000000)
 
     plt.plot(time_periods, [ingestion_time for ingestion_time in ingestion_times])
     plt.scatter(time_periods, [ingestion_time for ingestion_time in ingestion_times])
-    plt.xlabel("Time Period (h)")
-    plt.ylabel("Ingestion Time (us)")
+    plt.xlabel("Time Period (m)")
+    plt.ylabel("Ingestion Time (s)")
     plt.title("POSTGRESQL Ingestion Time Latency")
     plt.show()
     cursor.close()
@@ -67,11 +67,11 @@ def plot_selection_latency():
     cursor = conn.cursor()
     filename = posixpath.join(OUTPUT_PATH, "preprocessed_aws_1hour.csv")
     data_df = data.load_data_csv(filename).reset_index()
-    time_periods = [10, 100, 1000, 10000, 100000, 1000000]
+    time_periods = [1, 10, 100, 1000, 10000, 100000, 1000000]
     selection_times = []
     for time_period in time_periods:
         times = 0
-        for i in range(10):
+        for i in range(100):
             if i % 10 == 0:
                 print(i)
             timestamp = list(data_df.tail(time_period)["timestamp"])[0]
@@ -86,13 +86,13 @@ def plot_selection_latency():
             times += end_time - start_time
 
         times = np.mean(times)
-        selection_times.append((times) // 1000)
+        selection_times.append((times) / 1000000)
 
     plt.plot(time_periods, [selection_time for selection_time in selection_times])
     plt.scatter(time_periods, [selection_time for selection_time in selection_times])
 
-    plt.xlabel("Time Period (h)")
-    plt.ylabel("Selection Time (us)")
+    plt.xlabel("Time Period (m)")
+    plt.ylabel("Selection Time (ms)")
     plt.title("POSTGRESQL Selection Time Latency")
     plt.show()
     cursor.close()
@@ -103,12 +103,12 @@ def plot_aggregation_latency():
     conn = connect_to_db()
     cursor = conn.cursor()
 
-    time_periods = [10, 100, 1000, 10000, 100000, 1000000]
+    time_periods = [1, 10, 100, 1000, 10000, 100000, 1000000]
     aggregation_times = []
     for time_period in time_periods:
         times = 0
-        for i in range(10):
-            if i % 1 == 0:
+        for i in range(100):
+            if i % 10 == 0:
                 print(i)
             start_time = time.time_ns()
             cursor.execute(f"""
@@ -121,12 +121,12 @@ def plot_aggregation_latency():
             end_time = time.time_ns()
             times += end_time-start_time
         times = np.mean(times)
-        aggregation_times.append((times) // 1000)
+        aggregation_times.append((times) / 1000000)
 
     plt.plot(time_periods, [aggregation_time for aggregation_time in aggregation_times])
     plt.scatter(time_periods, [aggregation_time for aggregation_time in aggregation_times])
-    plt.xlabel("Time Period (h)")
-    plt.ylabel("Aggregation Time (us)")
+    plt.xlabel("Time Period (m)")
+    plt.ylabel("Aggregation Time (ms)")
     plt.title("POSTGRESQL Aggregation Time Latency")
     plt.show()
     cursor.close()
@@ -159,7 +159,7 @@ def create_table():
 def plot_data_size(file_path):
     conn = connect_to_db()
     cursor = conn.cursor()
-    time_periods = [10, 100, 1000, 10000, 100000, 1000000]
+    time_periods = [10, 100, 1000, 10000, 100000]
     data_df = pd.read_csv(file_path).reset_index()
     data_sizes = []
     cursor.execute("TRUNCATE TABLE weather_metrics;")
@@ -182,7 +182,7 @@ def plot_data_size(file_path):
 
     plt.plot(time_periods, [data_size for data_size in data_sizes])
     plt.scatter(time_periods, [data_size for data_size in data_sizes])
-    plt.xlabel("Time Period (h)")
+    plt.xlabel("Time Period (m)")
     plt.ylabel("Data Size")
     plt.title("POSTGRESQL Data Size")
     plt.show()
@@ -195,7 +195,8 @@ if __name__ == "__main__":
     filename = "preprocessed_aws_1hour.csv"
     filepath = posixpath.join(OUTPUT_PATH, filename)
     #plot_data_ingestion_latency(filepath)
+    #plot_data_size(filepath)
+
     #ingest_data(filepath)
-    plot_data_size(filepath)
     #plot_selection_latency()
-    #plot_aggregation_latency()
+    plot_aggregation_latency()
