@@ -1,3 +1,5 @@
+"""module used to send the datafile into graphite"""
+
 import socket
 
 # Configuration for Graphite
@@ -8,14 +10,14 @@ GRAPHITE_PORT = 2003
 DATA_FILE = "data/graphite_data.txt"
 
 def send_to_graphite(data_file, host, port):
+    """sends the data into graphite"""
     try:
         # Connect to Graphite
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((host, port))
             print(f"Connected to Graphite at {host}:{port}")
-            
             # Open the file and send data line by line
-            with open(data_file, "r") as file:
+            with open(data_file, "r", encoding="utf-8") as file:
                 for line in file:
                     # Clean the line and send it
                     data = line.strip()
