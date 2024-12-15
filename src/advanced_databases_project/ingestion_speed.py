@@ -33,8 +33,8 @@ def compute_ingestion_speed(filename: str, B: str, dir_name):
         print("Error executing the command.")
         print(e.stderr)
 
-    execution_time = (end_time - start_time) // 1000000000
-    print(f"Execution Time: {execution_time:.2f} s")
+    execution_time = (end_time - start_time) / 1000000
+    print(f"Execution Time: {execution_time:.2f} ms")
     shutil.rmtree(dir_name)
     return execution_time
 
@@ -63,7 +63,7 @@ def plot_ingestion_speed(params, Bs, rep):
         plt.plot(Ns, ingestion_speeds[B], label=B)
 
     plt.xlabel('N')
-    plt.ylabel('ingestion_speed (s)')
+    plt.ylabel('ingestion_speed (ms)')
     plt.legend()
 
     plt.show()

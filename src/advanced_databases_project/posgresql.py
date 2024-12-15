@@ -197,6 +197,6 @@ if __name__ == "__main__":
     #plot_data_ingestion_latency(filepath)
     #plot_data_size(filepath)
 
-    #ingest_data(filepath)
-    #plot_selection_latency()
+    ingest_data(filepath)
+    plot_selection_latency()
     plot_aggregation_latency()
