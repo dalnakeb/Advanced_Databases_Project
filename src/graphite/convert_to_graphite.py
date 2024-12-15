@@ -18,7 +18,6 @@ def convert_to_epoch(timestamp_str):
     dt = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
     return int(dt.timestamp())
 
-#il reste encore a ignorer la 1e rangée
 # Traduit les données en données pour graphite
 with open(input_file, "r", encoding="utf-8") as csv_file, open(output_file, "w", encoding="utf-8") as output:
     reader = csv.DictReader(csv_file)
