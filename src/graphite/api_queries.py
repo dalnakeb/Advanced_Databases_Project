@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import json
 from urllib.parse import quote #inshallah ca passe
 import requests
+import sys
 
 GRAPHITE_URL = "http://localhost/render"  # graphite render api's endpoint
 METRIC = "environment.air_pressure"
@@ -15,24 +16,42 @@ METRIC = "environment.air_pressure"
 #we use the unix epoch format (seconds since 1/1/1970)
 NB = 40000
 UNTIL_TIME = "1732024800"
-FROM_TIME = f"{int(UNTIL_TIME) - 3600*NB}"
+#FROM_TIME = f"{int(UNTIL_TIME) - 3600*NB}"
 
-def query_graphite(metric, from_time, until_time):
+def query_graphite(metric, until_time, arg, n):
     """make a query to graphite's render api over the given metric, 
     and in the specified time range"""
-    params = {
-        "target": metric,
+
+    from_time = f"{int(UNTIL_TIME) - 3600*n}"
+    params = {}
+    if arg == 'graph':
+        params = {
+            "target": metric,
+            "from": quote(from_time),
+            "until": quote(until_time),
+            "format": "png",
+            "width": 800,
+            "height": 600,
+            "title": "Air Pressure Graph",
+            "lineWidth": 2,
+        }
+    
+    if arg == 'select':
+        params = {
+            "target": metric,
+            "from": quote(from_time), 
+            "until": quote(until_time),
+            "format": "json",
+        }
+    if arg == 'aggregated':
+        params = {
+        "target": f"averageSeries({metric})",
         "from": quote(from_time),
         "until": quote(until_time),
-        "format": "png",  # Request the graph as a PNG image
-        "width": 800,     # Graph width in pixels
-        "height": 600,    # Graph height in pixels
-        "title": "Air Pressure Graph",  # Title of the graph
-        "lineWidth": 2,   # Thickness of the line in the graph
-    }
-    print(f"Querying with params: {params}")
+        "format": "json",
+        }
+        
     try:
-        print(f"Fetching graph with params: {params}")
         start_time = time.time_ns()
 
         # Send the GET request to Graphite
@@ -41,27 +60,43 @@ def query_graphite(metric, from_time, until_time):
 
         end_time = time.time_ns()
         # Save the image locally
-        output_path = os.path.expanduser(f"~/Screenshots/graph{NB}.png")
-        with open(output_path, "wb") as f:
-            f.write(response.content)
+        # output_path = os.path.expanduser(f"~/Screenshots/graph{NB}.png")
+        # with open(output_path, "wb") as f:
+        #     f.write(response.content)
 
-        print(f"Graph saved as ")
-        print(f"Time taken for the request: {(end_time - start_time) / 1_000_000_000:.2f} seconds")
+        # print(f"Time taken for the request: {(end_time - start_time) / 1_000_000_000:.2f} seconds")
+        return (end_time - start_time) / 1000000000
 
     except requests.RequestException as e:
         print(f"Error querying Graphite: {e}")
         return None
 
-query_graphite(METRIC, FROM_TIME, UNTIL_TIME)
-#print(query_data)
 
-# N=[10,100,1000,10000, 20000, 30000, 42572]
-# q_latency= [0.018931557, 0.022106593, 0.053436892, 0.183865365, 0.302734658, 0.439015871, 0.544481905]
-# q_aggregate = [0.023532308, 0.025569139, 0.035183309, 0.133541588, 0.244488525, 0.334968708, 0.430350666]
-# q_graph = [0.08, 0.09, 0.17, 0.31, 0.51, 0.69, 0.90]
-# plt.plot(N, q_aggregate)
-# plt.xlabel('Number of points')  # X-axis label
-# plt.ylabel('Time (s)')  # Y-axis label
-# plt.title('Graphite Aggregate query latency')  # Title
-# plt.legend()  # Show legend
-# plt.show()  # Display the plot
+def main():
+
+    # print(f"Mode selected: {mode}")
+    if len(sys.argv) != 2:
+        print("there is a missing argument")
+        sys.exit(1)
+
+    N = [10,100,1000,10000, 20000, 30000, 42572]
+    q_latency = []
+    for n in N:
+        q_latency.append(query_graphite(METRIC, UNTIL_TIME, sys.argv[1], n))
+
+    plt.plot(N, q_latency)
+    plt.xlabel('Number of points')  # X-axis label
+    plt.ylabel('Time (s)')  # Y-axis label
+    if sys.argv[1] == 'select':
+        plt.title('Graphite SELECT query latency')  # Title
+
+    if sys.argv[1] == 'aggregated':
+        plt.title('Graphite Aggregate query latency')  # Title
+
+    if sys.argv[1] == 'graph':
+        plt.title('Graphite graph query latency')  # Title
+
+    plt.show()  # Display the plot
+
+if __name__ == "__main__":
+    main()
