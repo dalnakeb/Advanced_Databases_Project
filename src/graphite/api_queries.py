@@ -59,12 +59,12 @@ def query_graphite(metric, until_time, arg, n):
         response.raise_for_status()
 
         end_time = time.time_ns()
-        # Save the image locally
+
+        # uncomment to save the graph (the path can be changed)
         # output_path = os.path.expanduser(f"~/Screenshots/graph{NB}.png")
         # with open(output_path, "wb") as f:
         #     f.write(response.content)
 
-        # print(f"Time taken for the request: {(end_time - start_time) / 1_000_000_000:.2f} seconds")
         return (end_time - start_time) / 1000000000
 
     except requests.RequestException as e:
@@ -73,8 +73,6 @@ def query_graphite(metric, until_time, arg, n):
 
 
 def main():
-
-    # print(f"Mode selected: {mode}")
     if len(sys.argv) != 2:
         print("there is a missing argument")
         sys.exit(1)
@@ -88,15 +86,15 @@ def main():
     plt.xlabel('Number of points')  # X-axis label
     plt.ylabel('Time (s)')  # Y-axis label
     if sys.argv[1] == 'select':
-        plt.title('Graphite SELECT query latency')  # Title
+        plt.title('Graphite SELECT query latency')
 
     if sys.argv[1] == 'aggregated':
-        plt.title('Graphite Aggregate query latency')  # Title
+        plt.title('Graphite Aggregate query latency')
 
     if sys.argv[1] == 'graph':
-        plt.title('Graphite graph query latency')  # Title
+        plt.title('Graphite graph query latency')
 
-    plt.show()  # Display the plot
+    plt.show()
 
 if __name__ == "__main__":
     main()
