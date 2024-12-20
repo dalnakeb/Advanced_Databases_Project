@@ -1,5 +1,6 @@
 """module used to send the datafile into graphite"""
 import time
+import matplotlib.pyplot as plt
 
 import socket
 
@@ -30,9 +31,20 @@ def send_to_graphite(data_file, host, port, max_line = 100000):
             print("All data sent successfully!")
             end_time = time.time_ns()
             print(f"query latency for {max_line} lines: {(end_time-start_time)/1000000000} seconds")
+            return (end_time-start_time)/1000000000
     except Exception as e:
         print(f"An error occurred: {e}")
 
-send_to_graphite(DATA_FILE, GRAPHITE_HOST, GRAPHITE_PORT)
 
-send_time_graphite = [0.001009524, 0.002028783, 0.015961696, 0.104520756, 1.541455145]
+N = [10,100,1000,10000,100000]
+send_time_graphite = []
+
+for n in N:
+    send_time_graphite.append(send_to_graphite(DATA_FILE, GRAPHITE_HOST, GRAPHITE_PORT))
+
+plt.plot(N, send_time_graphite)
+plt.xlabel('Number of points')  # X-axis label
+plt.ylabel('Time (s)')  # Y-axis label
+plt.title('Graphite ingestion time')
+plt.legend()
+plt.show()
