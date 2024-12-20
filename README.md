@@ -1,6 +1,26 @@
 # graphite:
 
 The commands specified in this part are to be made in the base of the repository.
+Also, as this benchmarking was made using the docker version you need to already have docker installed on your computer.
+
+### Installing Graphite:
+
+use this command to install graphite on docker on your computer:
+docker run -d \
+ --name graphite \
+ --restart=always \
+ -p 80:80 \
+ -p 2003-2004:2003-2004 \
+ -p 2023-2024:2023-2024 \
+ -p 8125:8125/udp \
+ -p 8126:8126 \
+ graphiteapp/graphite-statsd
+
+ then, ensure it is working correctly with :
+ docker ps
+ this line should show the graphite docker running
+
+ If your graphite host and ports are not the default ones, they should be corrected at the start of send_to_graphite.py and api_queries.py
 
 ### making the data file
 
